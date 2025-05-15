@@ -1,0 +1,594 @@
+﻿@model PrefixSpanDemo.Models.DemoViewModel
+@using PrefixSpanDemo.Controllers
+@{
+    ViewBag.Title = "FreshMart - Rau Củ Tươi Ngon & Gợi Ý Thông Minh"; // Tiêu đề mới
+    Layout = "~/Views/Shared/_LayoutPage1.cshtml";
+
+    var allProducts = ViewBag.Products as List<PrefixSpanDemo.Models.Product>;
+    // var productMap = HomeController.productMap; // Có thể không cần thiết nếu lấy tên trực tiếp từ allProducts
+
+    // QUAN TRỌNG: Đảm bảo đường dẫn này chính xác tới thư mục chứa ảnh của bạn.
+    // Ví dụ: Url.Content("~/Content/Images/") nếu ảnh nằm trong Content/Images
+    string imageBasePath = Url.Content("~/Images/"); // GIỮ THEO CODE GỐC BẠN CUNG CẤP, HÃY KIỂM TRA!
+}
+
+<style>
+    /* === MODERN FARMERS MARKET THEME - ENHANCED === */
+
+    /* 1. CSS Custom Properties (Variables) for Theming */
+    :root {
+        --font-primary: 'Poppins', Arial, sans-serif;
+        /* Cân nhắc thêm font serif cho tiêu đề nếu muốn (ví dụ: 'Merriweather')
+           và thêm link Google Font cho nó trong _LayoutPage1.cshtml */
+        --font-heading: 'Poppins', Arial, sans-serif; /* Hoặc var(--font-secondary) */
+        /* Color Palette - Fresh, Natural, and Trustworthy */
+        --color-green-dark: #2E7D32; /* Xanh lá đậm cho tiêu đề, accent mạnh */
+        --color-green-primary: #4CAF50; /* Xanh lá chính, cho nút, link */
+        --color-green-light: #AED581; /* Xanh lá nhạt, cho tag, highlight nhẹ */
+        --color-green-bg: #F1F8E9; /* Nền xanh lá rất nhạt cho một số section */
+
+        --color-orange-accent: #FF7043; /* Cam/Đào làm điểm nhấn (thay cho vàng/nâu đất) */
+        --color-orange-hover: #FF5722;
+        --color-grey-background: #f8f9fa; /* Nền chính của trang */
+        --color-white: #ffffff;
+        --color-card-background: var(--color-white);
+        --text-color-dark: #212529; /* Màu chữ chính */
+        --text-color-medium: #495057; /* Màu chữ phụ */
+        --text-color-light: #6c757d; /* Màu chữ nhạt hơn nữa */
+
+        --border-color-light: #e0e0e0;
+        --border-color-medium: #ced4da;
+        /* Spacing & Sizing */
+        --spacing-xs: 4px;
+        --spacing-sm: 8px;
+        --spacing-md: 16px;
+        --spacing-lg: 24px;
+        --spacing-xl: 32px;
+        --spacing-xxl: 48px;
+        --border-radius-main: 16px; /* Bo góc lớn hơn cho card */
+        --border-radius-button: 30px; /* Bo tròn cho nút */
+        --border-radius-input: 8px;
+        /* Shadows - Softer and more natural */
+        --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+        --shadow-md: 0 5px 15px rgba(0,0,0,0.07);
+        --shadow-lg: 0 12px 35px rgba(0,0,0,0.08);
+        --shadow-inset: inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    /* 2. Global Resets & Base Styles */
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: var(--font-primary);
+        background-color: var(--color-grey-background);
+        color: var(--text-color-dark);
+        line-height: 1.7;
+        font-size: 16px; /* Default font size for paragraphs */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-x: hidden;
+    }
+
+    .container-fluid {
+        max-width: 1700px; /* Rộng hơn nữa cho cảm giác thoáng */
+        margin: 0 auto;
+        padding: var(--spacing-xl) var(--spacing-xxl); /* 32px 48px */
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    /* 3. Typography & Headings */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-heading);
+        font-weight: 700; /* Tiêu đề luôn đậm */
+        color: var(--color-green-dark);
+        letter-spacing: -0.025em; /* Giảm khoảng cách chữ một chút */
+        margin-bottom: var(--spacing-lg);
+    }
+
+        h2.section-title, h3.section-title { /* Class chung cho tiêu đề section */
+            margin-top: var(--spacing-xxl);
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-md);
+            position: relative;
+            line-height: 1.3;
+        }
+
+            h2.section-title::after, h3.section-title::after {
+                content: '';
+                display: block;
+                width: 80px;
+                height: 4px;
+                background: var(--color-green-primary);
+                margin: var(--spacing-sm) auto 0;
+                border-radius: 2px;
+            }
+
+        h2.section-title {
+            font-size: 2.5rem; /* 40px */
+        }
+
+        h3.section-title {
+            font-size: 2rem; /* 32px */
+            color: var(--color-green-medium);
+        }
+
+            h3.section-title::after {
+                background: var(--color-orange-accent);
+            }
+
+
+    /* 4. Product Card Styling (.service-card) */
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--spacing-xl); /* 32px */
+    }
+
+    .service-card {
+        background-color: var(--color-card-background);
+        border-radius: var(--border-radius-main);
+        box-shadow: var(--shadow-md);
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        width: calc(25% - var(--spacing-xl) * 3/4); /* 4 cột, trừ đi gap */
+        display: flex;
+        flex-direction: column;
+        min-height: 420px;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--border-color-light);
+    }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+    .service-image {
+        height: 230px;
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .service-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.3s ease;
+        }
+
+    .service-card:hover .service-image img {
+        transform: scale(1.1);
+        filter: brightness(1.05) contrast(1.05); /* Tăng nhẹ độ sáng và tương phản */
+    }
+    /* Optional: Subtle gradient overlay on image hover */
+    .service-image::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(to top, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+    }
+
+    .service-card:hover .service-image::after {
+        opacity: 1;
+    }
+
+
+    .service-info {
+        padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-xl); /* 24px 24px 32px */
+        flex-grow: 1;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+        .service-info h3 { /* Tên sản phẩm */
+            font-family: var(--font-primary);
+            font-size: 1.2rem;
+            color: var(--text-color-dark);
+            font-weight: 600;
+            line-height: 1.4;
+            margin-top: var(--spacing-xs);
+            margin-bottom: var(--spacing-md);
+            min-height: 2.8em; /* Giữ 2 dòng */
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    /* Nút bấm */
+    .btn {
+        display: inline-block;
+        padding: var(--spacing-md) var(--spacing-xl); /* 16px 32px */
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        text-decoration: none !important;
+        color: var(--color-white) !important;
+        border-radius: var(--border-radius-button);
+        transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.8px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        z-index: 1; /* Để ripple không bị che */
+    }
+        /* Hiệu ứng Ripple cho nút */
+        .btn::after {
+            content: "";
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.3);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            transform: scale(0) translate(-50%, -50%);
+            opacity: 0;
+            top: 50%;
+            left: 50%;
+        }
+
+        .btn:not(:disabled):active::after {
+            transform: scale(4) translate(-50%, -50%);
+            opacity: 1;
+            transition: transform 0.7s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.9s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .btn.log-click { /* Nút "Xem chi tiết" */
+            background-color: var(--color-green-primary);
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.25);
+        }
+
+            .btn.log-click:hover {
+                background-color: var(--color-green-dark);
+                box-shadow: 0 6px 15px rgba(46, 125, 50, 0.35);
+                transform: translateY(-2px);
+            }
+
+    .btn-primary { /* Nút "Gộp Dữ Liệu CSV" */
+        background-color: var(--color-orange-accent);
+        box-shadow: 0 4px 10px rgba(255, 112, 67, 0.25);
+    }
+
+        .btn-primary:hover {
+            background-color: var(--color-orange-hover);
+            box-shadow: 0 6px 15px rgba(255, 87, 34, 0.35);
+            transform: translateY(-2px);
+        }
+
+    .btn:disabled {
+        background-color: var(--color-medium-gray) !important;
+        box-shadow: none !important;
+        cursor: not-allowed !important;
+        transform: none !important;
+        opacity: 0.7;
+    }
+
+    /* 5. Form CSV */
+    .csv-upload-form {
+        margin: var(--spacing-xxl) auto;
+        padding: var(--spacing-xl) var(--spacing-xxl);
+        border-radius: var(--border-radius-main);
+        background-color: var(--color-card-background);
+        max-width: 700px;
+        box-shadow: var(--shadow-lg);
+    }
+
+        .csv-upload-form h3.section-title { /* Áp dụng style section-title */
+            font-size: 1.8rem;
+            color: var(--color-green-dark);
+        }
+
+            .csv-upload-form h3.section-title::after {
+                background: var(--color-orange-accent);
+            }
+
+    .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+
+        .form-group label {
+            font-weight: 500;
+            color: var(--text-color-medium);
+            margin-bottom: var(--spacing-sm) !important;
+            font-size: 0.95rem;
+            display: block;
+        }
+
+    .form-control-file {
+        display: block;
+        width: 100%;
+        padding: var(--spacing-md);
+        font-size: 1rem;
+        border: 1px solid var(--border-color-medium);
+        border-radius: var(--border-radius-input);
+        background-color: var(--color-grey-background); /* Nền input */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        color: var(--text-color-dark);
+    }
+
+        .form-control-file:focus {
+            border-color: var(--color-orange-accent);
+            outline: none;
+            box-shadow: 0 0 0 0.25rem rgba(255, 112, 67, 0.2);
+        }
+
+        .form-control-file::file-selector-button {
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-right: var(--spacing-md);
+            background-color: var(--color-green-primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-weight: 500;
+        }
+
+            .form-control-file::file-selector-button:hover {
+                background-color: var(--color-green-dark);
+            }
+
+    /* 6. Thông báo (.alert) */
+    .alert {
+        padding: var(--spacing-md) var(--spacing-lg);
+        margin-top: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+        border-radius: var(--border-radius-input);
+        font-size: 0.95rem;
+        text-align: left;
+        box-shadow: var(--shadow-sm);
+        border-left-width: 5px;
+        border-left-style: solid;
+    }
+    /* Màu sắc cho alert giữ nguyên từ trước, đã khá tốt */
+
+    /* 7. Tag Gợi Ý */
+    .recommendation-tag {
+        position: absolute;
+        top: 15px;
+        left: -6px; /* Để tag có phần "gập" vào bên trong card */
+        background-color: var(--color-orange-accent);
+        color: white;
+        padding: 6px 12px 6px 18px; /* Padding không đối xứng */
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0; /* Bo góc một bên */
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+        z-index: 10;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        /* Tạo hình dạng giống ribbon hơn */
+        clip-path: polygon(0 0, 100% 0, 90% 50%, 100% 100%, 0 100%);
+    }
+
+    .service-card:hover .recommendation-tag {
+        background-color: var(--color-orange-hover);
+        transform: translateX(4px);
+    }
+
+
+    /* 8. Horizontal Rule (hr) */
+    hr {
+        margin-top: var(--spacing-xxl);
+        margin-bottom: var(--spacing-xxl);
+        border: 0;
+        border-top: 1px solid var(--border-color-light);
+    }
+
+    /* 9. Responsive adjustments */
+    @@media (max-width: 1450px) {
+        .service-card {
+            width: calc(33.333% - var(--spacing-xl) * 2/3);
+        }
+        /* 3 cột */
+    }
+
+    @@media (max-width: 1100px) {
+        .service-card {
+            width: calc(50% - var(--spacing-xl) / 2 );
+        }
+        /* 2 cột */
+    }
+
+    @@media (max-width: 767px) {
+        .container-fluid {
+            padding: var(--spacing-lg) var(--spacing-md);
+        }
+
+        .service-card {
+            width: 100%;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .row {
+            gap: 0;
+        }
+
+        h2.section-title {
+            font-size: 2rem;
+        }
+
+        h3.section-title {
+            font-size: 1.7rem;
+        }
+
+        .service-info h3 {
+            font-size: 1.1rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .service-image {
+            height: 200px;
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            font-size: 0.8rem;
+        }
+
+        .csv-upload-form {
+            padding: var(--spacing-lg);
+        }
+    }
+</style>
+
+@* === HTML BODY === *@
+<div class="container-fluid">
+
+    @* Thông báo TempData *@
+    @if (TempData["SuccessMessage"] != null)
+    {<div class="alert alert-success" role="alert">@Html.Raw(TempData["SuccessMessage"].ToString())</div>}
+    @if (TempData["InfoMessage"] != null)
+    {<div class="alert alert-info" role="alert">@Html.Raw(TempData["InfoMessage"].ToString())</div>}
+    @if (TempData["WarningMessage"] != null)
+    {<div class="alert alert-warning" role="alert">@Html.Raw(TempData["WarningMessage"].ToString())</div>}
+    @if (TempData["ErrorMessageFromPost"] != null)
+    {<div class="alert alert-danger" role="alert">@Html.Raw(TempData["ErrorMessageFromPost"].ToString())</div>}
+
+    <h2 class="text-center section-title">Khám Phá Rau Củ Tươi Ngon</h2>
+    <div class="row">
+        @if (allProducts != null && allProducts.Any())
+        {
+            foreach (var product in allProducts)
+            {
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="@(imageBasePath)@(string.IsNullOrEmpty(product.ImageFile) ? "default.png" : product.ImageFile)" alt="@product.Name" />
+                    </div>
+                    <div class="service-info">
+                        <h3>@product.Name</h3>
+                        <a href="javascript:void(0);" class="btn log-click" data-productid="@product.ProductId">Xem chi tiết</a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-center">Không có sản phẩm nào để hiển thị.</p>
+        }
+    </div>
+
+    <hr />
+    <h3 class="text-center section-title">Sản Phẩm Gợi Ý Cho Bạn</h3>
+    @if (Model.Recommendations != null && Model.Recommendations.Any())
+    {
+        <div class="row">
+            @foreach (var recId in Model.Recommendations)
+            {
+                var recommendedProduct = allProducts?.FirstOrDefault(p => p.ProductId == recId);
+                if (recommendedProduct != null)
+                {
+                    <div class="service-card">
+                        <div class="recommendation-tag">Đặc biệt</div> @* Tag gợi ý *@
+                        <div class="service-image">
+                            <img src="@(imageBasePath)@(string.IsNullOrEmpty(recommendedProduct.ImageFile) ? "default.png" : recommendedProduct.ImageFile)" alt="@recommendedProduct.Name" />
+                        </div>
+                        <div class="service-info">
+                            <h3>@recommendedProduct.Name</h3>
+                            <a href="javascript:void(0);" class="btn log-click" data-productid="@recommendedProduct.ProductId">Xem chi tiết</a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center" style="color:var(--text-color-muted); font-size: 1.1rem; padding: 20px 0;">Hãy khám phá và tương tác thêm với các sản phẩm để chúng tôi có thể đưa ra những gợi ý tốt nhất cho bạn nhé!</p>
+    }
+
+    <hr />
+
+    <div class="csv-upload-form">
+        <h3 class="text-center section-title">Góp Dữ Liệu Mua Hàng (CSV)</h3>
+        @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "csvUploadForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                @Html.Label("CsvFile", "Chọn File CSV (định dạng: mỗi dòng là các ProductID, ví dụ: 1,2,3):", new { @style = "display:block;" })
+                @Html.TextBoxFor(m => m.CsvFile, new { type = "file", @class = "form-control-file", accept = ".csv", required = "required" })
+                @Html.ValidationMessageFor(m => m.CsvFile, "", new { @class = "text-danger", style = "font-size:0.85em; display:block; margin-top:5px;" })
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;">Gộp Dữ Liệu</button>
+        }
+    </div>
+</div>
+
+@* Phần JavaScript giữ nguyên như phiên bản trước đã hoạt động (bao gồm cả việc tải jQuery) *@
+@section scripts {
+    @* jQuery nên được tải từ _LayoutPage1.cshtml hoặc chỉ MỘT LẦN ở đây.
+        Nếu _LayoutPage1.cshtml đã tải, bạn có thể comment dòng dưới.
+    *@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            if (typeof jQuery === 'undefined') {
+                console.error("LỖI NGHIÊM TRỌNG: jQuery CHƯA ĐƯỢC TẢI!");
+                $('#csvUploadForm button[type="submit"]').prop('disabled', true).text('Lỗi tải thư viện');
+                $('.log-click').prop('disabled', true).text('Lỗi tải thư viện');
+                // Cân nhắc hiển thị thông báo lỗi lớn hơn trên trang
+                var errorDiv = '<div class="alert alert-danger" style="position:fixed; top:10px; left:50%; transform:translateX(-50%); z-index:9999; width:80%; max-width:600px;">LỖI JAVASCRIPT NGHIÊM TRỌNG: Thư viện jQuery chưa được tải. Các chức năng tương tác sẽ không hoạt động. Vui lòng kiểm tra lại!</div>';
+                $('body').prepend(errorDiv);
+                return;
+            }
+            console.log("jQuery version: ", $.fn.jquery);
+
+            $('.log-click').on('click', function (e) {
+                e.preventDefault();
+                var productId = $(this).data('productid');
+                var button = $(this);
+
+                if (productId === undefined) {
+                    console.error("Lỗi: ProductId không xác định. Nút:", $(this).prop('outerHTML'));
+                    return;
+                }
+
+                button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...'); // Thêm icon loading
+
+                $.post('@Url.Action("LogClick", "Home")', { productId: productId })
+                    .done(function (data) {
+                        if (data && data.success === true) {
+                            window.location.reload();
+                        } else {
+                            alert('Lỗi từ Server: ' + (data && data.message ? data.message : 'Không thể ghi nhận.'));
+                            button.prop('disabled', false).text('Xem chi tiết');
+                        }
+                    })
+                    .fail(function(jqXHR) {
+                        alert('Lỗi kết nối/server ('+ jqXHR.status +').');
+                        button.prop('disabled', false).text('Xem chi tiết');
+                    });
+            });
+
+            // Hiệu ứng cho nút khi submit form CSV
+            $('#csvUploadForm').submit(function() {
+                var button = $(this).find('button[type="submit"]');
+                button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang gộp dữ liệu...');
+            });
+
+        });
+    </script>
+}
