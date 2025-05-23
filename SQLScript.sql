@@ -1,9 +1,4 @@
-﻿CREATE DATABASE QLRAUCU;
-GO
-USE QLRAUCU;
-GO
-
--- Bảng sản phẩm
+﻿-- Bảng sản phẩm
 CREATE TABLE Products (
     ProductId INT PRIMARY KEY,
     Name NVARCHAR(255) NOT NULL,
@@ -26,15 +21,15 @@ CREATE INDEX IX_Sequences_ClickTime ON Sequences(ClickTime);
 CREATE INDEX IX_Sequences_Session ON Sequences(SessionId, SequenceOrder);
 INSERT INTO Products (ProductId, Name, ImageFile)
 VALUES 
-(1, 'Bông ATiso', '1_ATiso.jpg'),
-(2, 'Bắp cải tím', '2_BapCaiTim.jpg'),
-(3, 'Cà chua', '3_CaChua.jpg'),
-(4, 'Cà rốt', '4_CaRot.jpg'),
-(5, 'Chanh vàng', '5_ChanhVang.jpg'),
-(6, 'Dưa leo', '6_DuaLeo.jpg'),
-(7, 'Khoai mỡ', '7_KhoaiMo.jpg'),
-(8, 'Khoai tây', '8_KhoaiTay.jpg'),
-(9, 'Khổ qua', '9_KhoQua.jpg'),
-(10, 'Ớt chuông đỏ', '10_OtChuongDo.jpg'),
-(11, 'Ớt chuông vàng', '11_OtChuongVang.jpg'),
-(12, 'Tỏi', '12_Toi.jpg');
+(1, N'Bông ATiso', '1_ATiso.jpg'),
+(2, N'Bắp cải tím', '2_BapCaiTim.jpg'),
+(3, N'Cà chua', '3_CaChua.jpg'),
+(4, N'Cà rốt', '4_CaRot.jpg'),
+(5, N'Chanh vàng', '5_ChanhVang.jpg'),
+(6, N'Dưa leo', '6_DuaLeo.jpg'),
+(7, N'Khoai mỡ', '7_KhoaiMo.jpg'),
+(8, N'Khoai tây', '8_KhoaiTay.jpg'),
+(9, N'Khổ qua', '9_KhoQua.jpg'),
+(10, N'Ớt chuông đỏ', '10_OtChuongDo.jpg'),
+(11, N'Ớt chuông vàng', '11_OtChuongVang.jpg'),
+(12, N'Tỏi', '12_Toi.jpg');
