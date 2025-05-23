@@ -132,6 +132,11 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
 # TeamCity is a build add-in
 _TeamCity*
 
